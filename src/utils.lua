@@ -27,20 +27,35 @@ function M.get_next_user_id(redis)
 end
 
 function M.get_user(redis, uid)
-    local user = {}
-    user.username = redis:hget('user::' .. uid, 'username');
-    user.email = redis:hget('user::' .. uid, 'email');
-    user.address = redis:hget('user::' .. uid, 'address');
-    user.ctime = redis:hget('user::' .. uid, 'ctime');
+    local user = {};
+    local ukey = 'user::' .. uid;
+    if redis:exists(ukey) == 0 then
+        return user;
+    end
+    user.uid = uid;
+    user.username = redis:hget(ukey, 'username');
+    user.email = redis:hget(ukey, 'email');
+    user.address = redis:hget(ukey, 'address');
+    user.ctime = redis:hget(ukey, 'ctime');
     return user;
 end
 
 function M.set_user(redis, user)
-    redis:hset('user::' .. user.uid, 'username', user.username);
-    redis:hset('user::' .. user.uid, 'email', user.email);
-    redis:hset('user::' .. user.uid, 'password', ngx.md5(user.password));
-    redis:hset('user::' .. user.uid, 'address', user.address);
-    redis:hset('user::' .. user.uid, 'ctime', user.ctime);
+    local ukey = 'user::' .. user.uid; 
+    redis:hset(ukey, 'username', user.username);
+    redis:hset(ukey, 'email', user.email);
+    redis:hset(ukey, 'password', ngx.md5(user.password));
+    redis:hset(ukey, 'address', user.address);
+    redis:hset(ukey, 'ctime', user.ctime);
+
+    redis:hset('username', user.username, user.uid);
+    redis:sadd('uidlst', user.uid);
+end
+
+function M.delete_user(redis, user)
+    redis:del('user::' .. user.uid);
+    redis:hdel('username', user.username);
+    redis:srem('uidlst', user.uid);
 end
 
 return M

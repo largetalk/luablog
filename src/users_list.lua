@@ -42,8 +42,6 @@ else
     user.uid = utils.get_next_user_id(instance);
     user.ctime = ngx.utctime();
     utils.set_user(instance, user);
-    instance:hset('username', user.username, user.uid);
-    instance:sadd('uidlst', user.uid);
     ngx.status = ngx.HTTP_CREATED;
     ngx.say(cjson.encode(user));
     ngx.exit(ngx.HTTP_OK);

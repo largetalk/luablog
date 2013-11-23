@@ -44,9 +44,11 @@ function M.set_user(redis, user)
     local ukey = 'user::' .. user.uid; 
     redis:hset(ukey, 'username', user.username);
     redis:hset(ukey, 'email', user.email);
-    redis:hset(ukey, 'password', ngx.md5(user.password));
     redis:hset(ukey, 'address', user.address);
     redis:hset(ukey, 'ctime', user.ctime);
+    if user.password then
+        redis:hset(ukey, 'password', ngx.md5(user.password));
+    end
 
     redis:hset('username', user.username, user.uid);
     redis:sadd('uidlst', user.uid);

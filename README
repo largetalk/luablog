@@ -9,3 +9,9 @@ curl -i http://localhost:8080/users/
 curl -i -X POST -d '{"username":"abc","email":"abc@123.com","password":"123","address":"china"}' http://localhost:8080/users/
 
 curl -i 'http://localhost:8080/users/?username=abc&password=123'
+
+curl -i http://localhost:8080/users/1/
+
+curl -X DELETE -i http://localhost:8080/users/1/
+
+curl -i -X POST -d '{"username":"abc","email":"abc@yahoo.com","password":"321","address":"usa"}' http://localhost:8080/users/1/

@@ -60,4 +60,24 @@ function M.delete_user(redis, user)
     redis:srem('uidlst', user.uid);
 end
 
+function M.get_next_blog_id(redis)
+    local bid = redis:incr('bidseq');
+    return bid;
+end
+
+function M.create_blog(redis, blog)
+    local bid = M.get_next_blog_id(redis);
+    blog.bid = bid;
+    local bkey = 'blog::' .. bid; 
+    redis:hset(bkey, 'title', blog.title);
+    redis:hset(bkey, 'content', blog.content);
+    redis:hset(bkey, 'user_id', blog.user_id);
+    redis:hset(bkey, 'ctime', ngx.utctime());
+
+    redis:sadd('bidlst', bid);
+    local user_blog_lst = 'user::' .. blog.user_id .. '::blog'
+    redis:sadd(user_blog_lst, bid);
+    return blog;
+end
+
 return M

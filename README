@@ -19,3 +19,10 @@ curl -i -X POST -d '{"username":"abc","email":"abc@yahoo.com","password":"321","
 curl -i http://localhost:8080/blogs/
 
 curl -i -X POST -d '{"title":"angularjs","content":"angular.js is what","user_id":"1"}' http://localhost:8080/blogs/
+
+curl -i http://localhost:8080/blogs/1/
+
+curl -X DELETE -i http://localhost:8080/blogs/1/
+
+curl -i -X POST -d '{"title":"what is angularjs","content":"angular.js is mvc framework by google"}' http://localhost:8080/blogs/1/
+

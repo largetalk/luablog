@@ -80,4 +80,32 @@ function M.create_blog(redis, blog)
     return blog;
 end
 
+function M.update_blog(redis, blog)
+    local bkey = 'blog::' .. blog.bid; 
+    redis:hset(bkey, 'title', blog.title);
+    redis:hset(bkey, 'content', blog.content);
+    return blog;
+end
+
+function M.get_blog(redis, bid)
+    local blog = {};
+    local bkey = 'blog::' .. bid;
+    if redis:exists(bkey) == 0 then
+        return blog;
+    end
+    blog.bid = bid;
+    blog.title = redis:hget(bkey, 'title');
+    blog.content = redis:hget(bkey, 'content');
+    blog.user_id = redis:hget(bkey, 'user_id');
+    blog.ctime = redis:hget(bkey, 'ctime');
+    return blog;
+end
+
+function M.delete_blog(redis, blog)
+    redis:del('blog::' .. blog.bid);
+    redis:srem('bidlst', blog.bid);
+    local user_blog_lst = 'user::' .. blog.user_id .. '::blog'
+    redis:srem(user_blog_lst, blog.bid);
+end
+
 return M
